@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="model_urdf" default="$(find open_manipulator_description)/urdf/open_manipulator_robot.urdf.xacro" />
+    <param name="robot_description_sdf" textfile="$(find px4)/Tools/sitl_gazebo/models/custom_drone_with_manipulator/custom_drone_with_manipulator.sdf" />
+
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model_urdf)" />
+
+    <node
+        name="spawn_model"
+        pkg="gazebo_ros"
+        type="spawn_model"
+        args="-sdf -param robot_description_sdf -model custom_drone_with_manipulator -x 0 -y 0.6 -z 0.3"
+        output="screen">
+    </node>
+
+    <!-- <rosparam file="$(find rmc_simulation)/gazebo_config/control/surus_control.yaml" command="load"/> -->
+
+<!-- <node name="controller_spawner" 
+    pkg="controller_manager" 
+    type="spawner" respawn="false" output="screen"
+    args="joint1_position_controller joint2_position_controller joint_state_controller"/> -->
+
+    <rosparam file="$(find px4)/Tools/sitl_gazebo/config/trajectory_controller.yaml" command="load" />
+
+    <!-- load the controllers -->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/open_manipulator" args="joint_state_controller arm_controller"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="world_broadcaster" args = "0 0 0 0 0 0 world base_link 10" />
+    <node pkg="tf" type="static_transform_publisher" name="map_broadcaster" args = "0 0 0 0 0 0 world map 10" />  
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
+        <param name="publish_frequency" type="double" value="50.0" />
+    </node>
+
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher">
+    </node>
+
+
+</launch>
