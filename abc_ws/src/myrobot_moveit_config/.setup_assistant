@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: fh_desc
+    relative_path: model.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/smart_grasping_sandbox.srdf
+  CONFIG:
+    author_name: rg-28
+    author_email: rajang597@gmail.com
+    generated_timestamp: 1605280246
